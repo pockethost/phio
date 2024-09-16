@@ -1,12 +1,12 @@
 {
   "name": "phio",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A CLI tool to manage your PocketHost instances",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benallfree/phio"
+    "url": "https://github.com/pockethost/phio.git"
   },
-  "homepage": "https://github.com/benallfree/phio",
+  "homepage": "https://github.com/pockethost/phio",
   "keywords": [
     "cli",
     "pocketbase",
@@ -15,7 +15,7 @@
   "author": "Ben Allfree",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/benallfree/phio/issues"
+    "url": "https://github.com/pockethost/phio/issues"
   },
   "module": "src/index.ts",
   "type": "module",
@@ -25,7 +25,7 @@
     "@types/node": "^22.5.5"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.6.2"
   },
   "scripts": {
     "dev": "tsx --watch ./src/index.ts"
@@ -49,6 +49,7 @@
     "event-stream": "^4.0.1",
     "fs-extra": "^11.2.0",
     "ora": "^8.1.0",
-    "pocketbase": "^0.21.5"
+    "pocketbase": "^0.21.5",
+    "tsx": "^4.19.1"
   }
 }
