@@ -1,0 +1,54 @@
+{
+  "name": "phio",
+  "version": "0.0.0",
+  "description": "A CLI tool to manage your PocketHost instances",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benallfree/phio"
+  },
+  "homepage": "https://github.com/benallfree/phio",
+  "keywords": [
+    "cli",
+    "pocketbase",
+    "pockethost"
+  ],
+  "author": "Ben Allfree",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benallfree/phio/issues"
+  },
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.5.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "tsx --watch ./src/index.ts"
+  },
+  "bin": {
+    "phio": "src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@inquirer/prompts": "^5.5.0",
+    "@s-libs/micro-dash": "^18.0.0",
+    "@samkirkland/ftp-deploy": "^1.2.4",
+    "@sentool/fetch-event-source": "^0.5.0",
+    "chokidar": "^4.0.0",
+    "commander": "^12.1.0",
+    "email-validator": "^2.0.4",
+    "env-paths": "^3.0.0",
+    "env-var": "^7.5.0",
+    "event-stream": "^4.0.1",
+    "fs-extra": "^11.2.0",
+    "ora": "^8.1.0",
+    "pocketbase": "^0.21.5"
+  }
+}
