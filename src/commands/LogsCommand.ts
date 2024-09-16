@@ -1,7 +1,6 @@
+import { fetchEventSource } from '@sentool/fetch-event-source'
 import { Command } from 'commander'
 import { config } from '../lib/config'
-//@ts-ignore
-import { fetchEventSource } from '@sentool/fetch-event-source'
 
 export enum StreamNames {
   StdOut = 'stdout',

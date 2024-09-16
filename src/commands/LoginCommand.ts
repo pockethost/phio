@@ -1,10 +1,9 @@
 import { input, password } from '@inquirer/prompts'
 import { Command } from 'commander'
 import * as EmailValidator from 'email-validator'
-//@ts-ignore
-import { runTasks } from './Task'
 import { config } from '../lib/config'
 import { getClient } from './../lib/getClient'
+import { runTasks } from './../lib/Task'
 
 export const LoginCommand = () =>
   new Command('login')
@@ -38,7 +37,6 @@ export const LoginCommand = () =>
                 const res = await client
                   .collection('users')
                   .authWithPassword(email, pw)
-                console.log({ res })
               },
             },
           ])

@@ -22,7 +22,8 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.5.5"
+    "@types/node": "^22.5.5",
+    "prettier-plugin-organize-imports": "^4.0.0"
   },
   "peerDependencies": {
     "typescript": "^5.6.2"
@@ -51,5 +52,13 @@
     "ora": "^8.1.0",
     "pocketbase": "^0.21.5",
     "tsx": "^4.19.1"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "plugins": [
+      "prettier-plugin-organize-imports"
+    ]
   }
 }
