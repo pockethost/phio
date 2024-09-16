@@ -1,8 +1,10 @@
 import { debounce } from '@s-libs/micro-dash'
 import { deploy, excludeDefaults } from '@samkirkland/ftp-deploy'
+import Bottleneck from 'bottleneck'
 import { watch } from 'chokidar'
 import { Command } from 'commander'
 import { ensureDirSync } from 'fs-extra'
+import multimatch from 'multimatch'
 import { config } from '../lib/config'
 import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
 import { defaultInstanceId } from './../lib/defaultInstanceId'
@@ -37,7 +39,7 @@ export const DevCommand = () => {
       '-i, --include <include...>',
       'Files to include in the sync',
       (val, prev) => [...prev, val],
-      ['pb_*/**/*']
+      ['pb_*/**/*', `package.json`, `bun.lockb`]
     )
     .option(
       '-e, --exclude <exclude...>',
@@ -53,22 +55,35 @@ export const DevCommand = () => {
         process.exit(1)
       }
       console.log(`Dev mode`)
+      console.log({ include, exclude })
 
       const instance = await getInstanceBySubdomainCnameOrId(_instanceId)
 
-      const upload = debounce(() => {
-        deployMyCode(instance.subdomain, include, exclude).catch(console.error)
-      }, 200)
+      const limiter = new Bottleneck({ maxConcurrent: 1 })
+      const upload = debounce(
+        () =>
+          limiter.schedule(() =>
+            deployMyCode(instance.subdomain, include, exclude).catch(
+              console.error
+            )
+          ),
+        200
+      )
 
-      const watcher = watch(['.'], {
+      const watcher = watch('.', {
         persistent: true,
         ignored: (file) => {
-          const isIgnored = file !== '.' && !file.startsWith('pb_')
-          // console.log({ file, isIgnored })
+          if (file === '.') return false
+          const isIgnored =
+            multimatch([file], include).length === 0 ||
+            multimatch([file], exclude).length > 0
+          console.log({ file, isIgnored })
           return isIgnored
         },
       })
-      console.log(`Watching for changes in pb_*/**/*`)
+      console.log(
+        `Watching for changes in ${include.join(', ')} and excluding ${exclude.join(', ')}`
+      )
       const handle = (path: string, details: any) => {
         upload()
         // internal
