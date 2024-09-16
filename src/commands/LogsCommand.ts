@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import { config } from './config'
+import { config } from '../lib/config'
 //@ts-ignore
 import { fetchEventSource } from '@sentool/fetch-event-source'
 
