@@ -40,7 +40,7 @@
   "dependencies": {
     "@inquirer/prompts": "^5.5.0",
     "@s-libs/micro-dash": "^18.0.0",
-    "@samkirkland/ftp-deploy": "^1.2.4",
+    "@samkirkland/ftp-deploy": "github:benallfree/ftp-deploy#glob",
     "@sentool/fetch-event-source": "^0.5.0",
     "bottleneck": "^2.19.5",
     "chokidar": "^4.0.0",
