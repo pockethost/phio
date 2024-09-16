@@ -1,13 +1,17 @@
 import { debounce } from '@s-libs/micro-dash'
-import { deploy } from '@samkirkland/ftp-deploy'
+import { deploy, excludeDefaults } from '@samkirkland/ftp-deploy'
 import { watch } from 'chokidar'
 import { Command } from 'commander'
 import { ensureDirSync } from 'fs-extra'
 import { config } from '../lib/config'
+import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
 import { defaultInstanceId } from './../lib/defaultInstanceId'
-import { getClient } from './../lib/getClient'
 
-async function deployMyCode(instanceName: string) {
+async function deployMyCode(
+  instanceName: string,
+  include: string[],
+  exclude: string[]
+) {
   const cachePath = '.cache'
   ensureDirSync(cachePath)
 
@@ -17,7 +21,8 @@ async function deployMyCode(instanceName: string) {
     username: `__auth__`,
     password: config(`auth`)!.token,
     'server-dir': `${instanceName}/`,
-    exclude: ['*', '!pb_*/**/*'],
+    include,
+    exclude: [...excludeDefaults, ...exclude],
     'state-name': '.cache/.ftp-deploy-sync-state.json',
     'log-level': 'verbose',
   })
@@ -28,22 +33,31 @@ export const DevCommand = () => {
   return new Command('dev')
     .argument(`[instanceId]`, `Instance name`, defaultInstanceId())
     .description(`Watch for local modifications and sync to remote`)
-    .action(async (_instanceId) => {
+    .option(
+      '-i, --include <include...>',
+      'Files to include in the sync',
+      (val, prev) => [...prev, val],
+      ['pb_*/**/*']
+    )
+    .option(
+      '-e, --exclude <exclude...>',
+      'Files to exclude from the sync',
+      (val, prev) => [...prev, val],
+      [`pb_data/**/*`]
+    )
+    .action(async (_instanceId, { include, exclude }) => {
       if (!_instanceId) {
         console.error(
-          'No instance name provided and none was found in package.json or pockethost.json'
+          `No instance name provided and none was found in package.json or pockethost.json. Use 'phio link <instance>'`
         )
         process.exit(1)
       }
+      console.log(`Dev mode`)
 
-      const client = getClient()
-
-      const instance = await client
-        .collection(`instances`)
-        .getFirstListItem(`id='${_instanceId}' || subdomain='${_instanceId}'`)
+      const instance = await getInstanceBySubdomainCnameOrId(_instanceId)
 
       const upload = debounce(() => {
-        deployMyCode(instance.subdomain).catch(console.error)
+        deployMyCode(instance.subdomain, include, exclude).catch(console.error)
       }, 200)
 
       const watcher = watch(['.'], {
@@ -58,7 +72,7 @@ export const DevCommand = () => {
       const handle = (path: string, details: any) => {
         upload()
         // internal
-        console.log({ path, details })
+        console.log(`Syncing ${path}`)
       }
       watcher.on('add', handle).on('change', handle).on('unlink', handle)
     })

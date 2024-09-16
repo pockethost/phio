@@ -15,3 +15,12 @@ export const getClient = () => {
   }
   return client
 }
+
+export const getInstanceBySubdomainCnameOrId = async (search: string) => {
+  const client = getClient()
+  return await client
+    .collection(`instances`)
+    .getFirstListItem(
+      `id='${search}' || subdomain='${search}' || cname='${search}'`
+    )
+}

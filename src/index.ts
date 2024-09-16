@@ -1,11 +1,12 @@
 #!/usr/bin/env tsx
 import { program } from 'commander'
-import { LoginCommand } from './commands/LoginCommand'
 import { version } from '../package.json'
-import { LogsCommand } from './commands/LogsCommand'
 import { DevCommand } from './commands/DevCommand'
-import { WhoAmICommand } from './commands/WhoAmICommand'
+import { LinkCommand } from './commands/LinkCommand'
 import { ListCommand } from './commands/ListCommand'
+import { LoginCommand } from './commands/LoginCommand'
+import { LogsCommand } from './commands/LogsCommand'
+import { WhoAmICommand } from './commands/WhoAmICommand'
 
 program
   .name(`PocketHost CLI`)
@@ -16,5 +17,6 @@ program
   .addCommand(DevCommand())
   .addCommand(WhoAmICommand())
   .addCommand(ListCommand())
+  .addCommand(LinkCommand())
 
 program.parseAsync(process.argv).catch(console.error)
