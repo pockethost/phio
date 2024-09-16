@@ -39,13 +39,20 @@ export const DevCommand = () => {
       '-i, --include <include...>',
       'Files to include in the sync',
       (val, prev) => [...prev, val],
-      ['pb_*/**/*', `package.json`, `bun.lockb`]
+      [
+        `pb_*`,
+        'pb_*/**/*',
+        `package.json`,
+        `bun.lockb`,
+        `patches`,
+        `patches/**/*`,
+      ]
     )
     .option(
       '-e, --exclude <exclude...>',
       'Files to exclude from the sync',
       (val, prev) => [...prev, val],
-      [`pb_data/**/*`]
+      [`pb_data`, `pb_data/**/*`]
     )
     .action(async (_instanceId, { include, exclude }) => {
       if (!_instanceId) {
@@ -74,10 +81,17 @@ export const DevCommand = () => {
         persistent: true,
         ignored: (file) => {
           if (file === '.') return false
-          const isIgnored =
-            multimatch([file], include).length === 0 ||
-            multimatch([file], exclude).length > 0
-          console.log({ file, isIgnored })
+          const isIncluded = multimatch([file], include).length > 0
+          const isExcluded = multimatch([file], exclude).length > 0
+          const isIgnored = !isIncluded || isExcluded
+          console.log({
+            file,
+            include,
+            isIncluded,
+            exclude,
+            isExcluded,
+            isIgnored,
+          })
           return isIgnored
         },
       })
