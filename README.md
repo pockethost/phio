@@ -4,6 +4,13 @@
 
 ```bash
 bunx phio login
+bunx phio whoami
+```
+
+**List instances**
+
+```bash
+bunx phio list
 ```
 
 **Watch and push local changes instantly**
