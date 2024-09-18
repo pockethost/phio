@@ -1,5 +1,11 @@
 # phio
 
+## 0.1.2
+
+### Patch Changes
+
+- Enh: add --verbose flag to dev mode
+
 ## 0.1.1
 
 ### Patch Changes
