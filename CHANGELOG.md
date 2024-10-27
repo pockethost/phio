@@ -1,5 +1,15 @@
 # phio
 
+## 0.2.0
+
+### Minor Changes
+
+- Introduced deploy command
+
+### Patch Changes
+
+- Command refactoring
+
 ## 0.1.2
 
 ### Patch Changes

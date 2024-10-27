@@ -1,6 +1,6 @@
 {
   "name": "phio",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A CLI tool to manage your PocketHost instances",
   "repository": {
     "type": "git",
@@ -17,8 +17,10 @@
   "bugs": {
     "url": "https://github.com/pockethost/phio/issues"
   },
+  "main": "src/index.ts",
   "module": "src/index.ts",
   "type": "module",
+  "types": "src/index.ts",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/fs-extra": "^11.0.4",
@@ -32,7 +34,7 @@
     "dev": "tsx --watch ./src/index.ts"
   },
   "bin": {
-    "phio": "src/index.ts"
+    "phio": "src/cli.ts"
   },
   "files": [
     "src"

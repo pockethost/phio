@@ -3,6 +3,7 @@ import { type AuthModel } from 'pocketbase'
 import { PHIO_HOME } from './constants'
 
 export type Config = {
+  instanceId: string
   email: string
   auth: { record: AuthModel; token: string }
 }

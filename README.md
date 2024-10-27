@@ -19,10 +19,10 @@ bunx phio list
 bunx phio dev [instance]
 ```
 
-**Bi-directional sync**
+**Deploy to remote**
 
 ```bash
-bunx phio sync [instance]
+bunx phio deploy [instance]
 ```
 
 **Tail logs**

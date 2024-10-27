@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'fs'
 
-export const defaultInstanceId = () => {
+export const savedInstanceId = () => {
   if (existsSync('package.json')) {
     const pkg = JSON.parse(readFileSync('package.json').toString())
     if (pkg.pockethost?.instanceId) {

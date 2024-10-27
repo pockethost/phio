@@ -1,22 +1,11 @@
-#!/usr/bin/env tsx
-import { program } from 'commander'
-import { version } from '../package.json'
-import { DevCommand } from './commands/DevCommand'
-import { LinkCommand } from './commands/LinkCommand'
-import { ListCommand } from './commands/ListCommand'
-import { LoginCommand } from './commands/LoginCommand'
-import { LogsCommand } from './commands/LogsCommand'
-import { WhoAmICommand } from './commands/WhoAmICommand'
+import { config } from './lib/config'
 
-program
-  .name(`PocketHost CLI`)
-  .version(version)
-  .description(`CLI access to phio`)
-  .addCommand(LoginCommand())
-  .addCommand(LogsCommand())
-  .addCommand(DevCommand())
-  .addCommand(WhoAmICommand())
-  .addCommand(ListCommand())
-  .addCommand(LinkCommand())
+export const isLoggedIn = () => {
+  return !!config('auth')
+}
 
-program.parseAsync(process.argv).catch(console.error)
+export * from './commands/DevCommand'
+export * from './commands/LinkCommand'
+export * from './commands/LoginCommand'
+export { config } from './lib/config'
+export { getClient } from './lib/getClient'
