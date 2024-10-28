@@ -1,5 +1,11 @@
 # phio
 
+## 0.2.1
+
+### Patch Changes
+
+- Fix: Link now uses package.json
+
 ## 0.2.0
 
 ### Minor Changes
