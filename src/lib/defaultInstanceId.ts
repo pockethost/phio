@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 
 export const savedInstanceId = () => {
   if (existsSync('package.json')) {
@@ -14,4 +14,29 @@ export const savedInstanceId = () => {
     }
   }
   return null
+}
+
+export const saveInstanceId = (
+  instanceId: string,
+  file: 'package.json' | 'pockethost.json'
+) => {
+  if (!existsSync(file)) {
+    // Create new file if it doesn't exist
+    const newContent =
+      file === 'package.json' ? { pockethost: { instanceId } } : { instanceId }
+    writeFileSync(file, JSON.stringify(newContent, null, 2))
+    return
+  }
+
+  // Update existing file
+  const content = JSON.parse(readFileSync(file).toString())
+
+  if (file === 'package.json') {
+    content.pockethost = content.pockethost || {}
+    content.pockethost.instanceId = instanceId
+  } else {
+    content.instanceId = instanceId
+  }
+
+  writeFileSync(file, JSON.stringify(content, null, 2))
 }

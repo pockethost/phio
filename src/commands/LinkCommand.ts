@@ -1,12 +1,14 @@
 import { select } from '@inquirer/prompts'
 import { Command } from 'commander'
 import { config } from '../lib/config'
+import { saveInstanceId } from '../lib/defaultInstanceId'
 import { InstanceFields } from '../lib/InstanceFields'
 import { getClient, getInstanceBySubdomainCnameOrId } from './../lib/getClient'
 
 export const isLinked = () => !!config('instanceId')
 
 export const link = async (instanceNameOrId: string) => {
+  saveInstanceId(instanceNameOrId, 'package.json')
   const instance = await getInstanceBySubdomainCnameOrId(instanceNameOrId)
   if (!instance) {
     return
