@@ -2,6 +2,7 @@ import { fetchEventSource } from '@sentool/fetch-event-source'
 import { Command } from 'commander'
 import { config } from '../lib/config'
 import { savedInstanceId } from '../lib/defaultInstanceId'
+import { ensureLoggedIn } from './ensureLoggedIn'
 
 export enum StreamNames {
   StdOut = 'stdout',
@@ -13,13 +14,19 @@ export type InstanceLogFields = {
   time: string
   stream: StreamNames
 }
-const watchInstanceLog = (
+
+type Unsubscribe = () => void
+
+const watchInstanceLog = async (
   instanceId: string,
   update: (log: InstanceLogFields) => void,
   nInitial = 100
-): (() => void) => {
+): Promise<Unsubscribe> => {
   const controller = new AbortController()
   const signal = controller.signal
+
+  await ensureLoggedIn()
+
   const continuallyFetchFromEventSource = () => {
     const url = `https://${instanceId}.pockethost.io/logs`
     const body = {
@@ -37,14 +44,13 @@ const watchInstanceLog = (
       body: JSON.stringify(body),
       onmessage: (event: any) => {
         const { data } = event
-
+        if (!data) return
         update(data)
       },
       onopen: async (response: Response) => {
         // console.log(response)
       },
       onerror: (e: Error) => {
-        console.error(`got an error`, e)
         setTimeout(continuallyFetchFromEventSource, 100)
       },
       onclose: () => {
@@ -73,6 +79,8 @@ export const LogsCommand = () => {
         } else {
           console.log(`[${time}] ${message}`)
         }
+      }).catch((e) => {
+        console.error(`Error fetching logs`, e)
       })
     })
 }
