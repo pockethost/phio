@@ -1,5 +1,12 @@
 # phio
 
+## 0.2.2
+
+### Patch Changes
+
+- 467c4ba: Enh: Validate auth before tailing instance logs
+- 4e8ddb5: Fix: auth token now stored correctly after refresh
+
 ## 0.2.1
 
 ### Patch Changes
