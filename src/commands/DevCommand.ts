@@ -1,5 +1,6 @@
 import { debounce } from '@s-libs/micro-dash'
 import { deploy, excludeDefaults } from '@samkirkland/ftp-deploy'
+import { IFtpDeployArguments } from '@samkirkland/ftp-deploy/src/types'
 import Bottleneck from 'bottleneck'
 import { watch } from 'chokidar'
 import { Command } from 'commander'
@@ -96,7 +97,7 @@ export async function deployMyCode(
   ensureDirSync(cachePath)
 
   console.log('🚚 Deploy started')
-  await deploy({
+  const args: IFtpDeployArguments = {
     server: 'ftp.pockethost.io',
     username: `__auth__`,
     password: config(`auth`)!.token,
@@ -104,7 +105,9 @@ export async function deployMyCode(
     include,
     exclude: [...excludeDefaults, ...exclude],
     'log-level': verbose ? 'verbose' : 'standard',
-  })
+  }
+
+  await deploy(args)
   console.log('🚀 Deploy done!')
 }
 
