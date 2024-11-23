@@ -22,6 +22,7 @@
   "type": "module",
   "types": "src/index.ts",
   "devDependencies": {
+    "@changesets/cli": "^2.27.10",
     "@types/bun": "latest",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.5.5",
