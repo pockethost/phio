@@ -2,7 +2,7 @@ import { fetchEventSource } from '@sentool/fetch-event-source'
 import { Command } from 'commander'
 import { config } from '../lib/config'
 import { savedInstanceId } from '../lib/defaultInstanceId'
-import { ensureLoggedIn } from './ensureLoggedIn'
+import { ensureLoggedIn } from '../lib/ensureLoggedIn'
 
 export enum StreamNames {
   StdOut = 'stdout',

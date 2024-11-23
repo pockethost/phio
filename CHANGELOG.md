@@ -1,5 +1,11 @@
 # phio
 
+## 0.2.3
+
+### Patch Changes
+
+- Fix: bad include path
+
 ## 0.2.2
 
 ### Patch Changes
