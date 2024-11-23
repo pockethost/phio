@@ -10,7 +10,7 @@ export const getClient = () => {
     client.authStore.loadFromCookie(token)
     // console.log({ valid: client.authStore.isValid })
     client.authStore.onChange((token, record) => {
-      config('auth', { token, record })
+      config('auth', { token: client.authStore.exportToCookie(), record })
     })
   }
   return client
