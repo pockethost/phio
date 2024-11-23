@@ -1,5 +1,11 @@
 # phio
 
+## 0.2.4
+
+### Patch Changes
+
+- Fix: --include and --exclude now parse comma separated values correctly
+
 ## 0.2.3
 
 ### Patch Changes

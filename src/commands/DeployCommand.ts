@@ -10,13 +10,15 @@ export const DeployCommand = () => {
     .option(
       '-i, --include <include...>',
       'Files to include in the sync',
-      (val, prev) => [...prev, val],
+      (val, prev) => [...prev, ...val.split(',')],
       DEFAULT_INCLUDES
     )
     .option(
       '-e, --exclude <exclude...>',
       'Files to exclude from the sync',
-      (val, prev) => [...prev, val],
+      (val, prev) => {
+        return [...prev, ...val.split(',')]
+      },
       DEFAULT_EXCLUDES
     )
     .action((instanceId, options) => {
