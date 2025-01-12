@@ -4,7 +4,6 @@ import { IFtpDeployArguments } from '@samkirkland/ftp-deploy/src/types'
 import Bottleneck from 'bottleneck'
 import { watch } from 'chokidar'
 import { Command } from 'commander'
-import { ensureDirSync } from 'fs-extra'
 import multimatch from 'multimatch'
 import { config } from '../lib/config'
 import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
@@ -93,9 +92,6 @@ export async function deployMyCode(
   exclude: string[],
   verbose: boolean
 ) {
-  const cachePath = '.phiocache'
-  ensureDirSync(cachePath)
-
   console.log('🚚 Deploy started')
   const args: IFtpDeployArguments = {
     server: 'ftp.pockethost.io',
