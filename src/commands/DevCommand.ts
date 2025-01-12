@@ -104,10 +104,8 @@ export async function deployMyCode(
     'server-dir': `${instanceName}/`,
     include,
     exclude: [...excludeDefaults, ...exclude],
-    'log-level': verbose ? 'verbose' : 'standard',
+    'log-level': verbose ? 'verbose' : 'minimal',
   }
-
-  console.log({ args })
 
   await deploy(args)
   console.log('🚀 Deploy done!')
