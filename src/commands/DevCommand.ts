@@ -93,7 +93,7 @@ export async function deployMyCode(
   exclude: string[],
   verbose: boolean
 ) {
-  const cachePath = '.cache'
+  const cachePath = '.phiocache'
   ensureDirSync(cachePath)
 
   console.log('🚚 Deploy started')
