@@ -22,6 +22,14 @@ export const linkWithUserInput = async () => {
   const instances = await client
     .collection(`instances`)
     .getFullList<InstanceFields>()
+
+  if (instances.length === 0) {
+    console.error(
+      `No instances found. If this seems wrong, use 'phio login' to log in, then try again.`
+    )
+    return
+  }
+
   while (true) {
     const instanceNameOrId = await select({
       message: `Choose the instance you'd like to link`,
