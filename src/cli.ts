@@ -3,6 +3,7 @@ import { program } from 'commander'
 import { version } from '../package.json'
 import { DeployCommand } from './commands/DeployCommand'
 import { DevCommand } from './commands/DevCommand'
+import { InfoCommand } from './commands/InfoCommand'
 import { LinkCommand } from './commands/LinkCommand'
 import { ListCommand } from './commands/ListCommand'
 import { LoginCommand } from './commands/LoginCommand'
@@ -20,5 +21,6 @@ program
   .addCommand(ListCommand())
   .addCommand(LinkCommand())
   .addCommand(DeployCommand())
+  .addCommand(InfoCommand())
 
 program.parseAsync(process.argv).catch(console.error)
