@@ -1,5 +1,13 @@
 # phio
 
+## 0.2.5
+
+### Patch Changes
+
+- 283da4e: Add 'info' command
+- b17fca2: Add error handling when 'link' returns no instances
+- 8aaa611: Add 'ls' alias
+
 ## 0.2.4
 
 ### Patch Changes
