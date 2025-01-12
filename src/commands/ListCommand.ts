@@ -4,6 +4,7 @@ import { InstanceFields } from './../lib/InstanceFields'
 
 export const ListCommand = () => {
   return new Command(`list`)
+    .alias(`ls`)
     .description(`List all the logs`)
     .action(async () => {
       const client = getClient()
