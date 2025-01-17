@@ -33,12 +33,14 @@ export const linkWithUserInput = async () => {
   while (true) {
     const instanceNameOrId = await select({
       message: `Choose the instance you'd like to link`,
-      choices: instances.map((instance) => ({
-        name: `${instance.subdomain} (${instance.id}) ${
-          instance.cname ? `(${instance.cname})` : ''
-        } (${instance.status.toUpperCase()})`,
-        value: instance.subdomain,
-      })),
+      choices: instances
+        .sort((a, b) => a.subdomain.localeCompare(b.subdomain))
+        .map((instance) => ({
+          name: `${instance.subdomain} (${instance.id}) ${
+            instance.cname ? `(${instance.cname})` : ''
+          } (${instance.status.toUpperCase()})`,
+          value: instance.subdomain,
+        })),
     })
     const instance = await link(instanceNameOrId)
     if (!instance) {

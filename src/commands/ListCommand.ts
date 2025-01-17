@@ -11,12 +11,14 @@ export const ListCommand = () => {
       const instances = await client
         .collection(`instances`)
         .getFullList<InstanceFields>()
-      instances.forEach((instance) => {
-        console.log(
-          `- ${instance.subdomain} (${instance.id}) ${
-            instance.cname ? `(${instance.cname})` : ''
-          } (${instance.status.toUpperCase()})`
-        )
-      })
+      instances
+        .sort((a, b) => a.subdomain.localeCompare(b.subdomain))
+        .forEach((instance) => {
+          console.log(
+            `- ${instance.subdomain} (${instance.id}) ${
+              instance.cname ? `(${instance.cname})` : ''
+            } (${instance.status.toUpperCase()})`
+          )
+        })
     })
 }
