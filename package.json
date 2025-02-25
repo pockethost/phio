@@ -40,7 +40,7 @@
   "dependencies": {
     "@inquirer/prompts": "^5.5.0",
     "@s-libs/micro-dash": "^18.0.0",
-    "@samkirkland/ftp-deploy": "github:benallfree/ftp-deploy#glob",
+    "@samkirkland/ftp-deploy": "github:benallfree/ftp-deploy#132389e",
     "@sentool/fetch-event-source": "^0.5.0",
     "bottleneck": "^2.19.5",
     "chokidar": "^4.0.0",
@@ -53,7 +53,7 @@
     "multimatch": "^7.0.0",
     "ora": "^8.1.0",
     "pocketbase": "^0.21.5",
-    "tsx": "^4.19.1",
+    "tsx": "^4.19.3",
     "typescript": "^5.6.2"
   },
   "prettier": {

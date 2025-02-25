@@ -1,15 +1,14 @@
 import { debounce } from '@s-libs/micro-dash'
-import * as ftp from '@samkirkland/ftp-deploy'
+import { deploy, excludeDefaults } from '@samkirkland/ftp-deploy'
 import { IFtpDeployArguments } from '@samkirkland/ftp-deploy/src/types'
 import Bottleneck from 'bottleneck'
 import { watch } from 'chokidar'
 import { Command } from 'commander'
 import multimatch from 'multimatch'
 import { config } from '../lib/config'
+import { ensureLoggedIn } from '../lib/ensureLoggedIn'
 import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
 import { savedInstanceName } from './../lib/defaultInstanceId'
-
-const { deploy, excludeDefaults } = ftp
 
 export const DEFAULT_INCLUDES = [
   `pb_*`,
@@ -29,24 +28,29 @@ export type DeployOptions = {
 }
 
 export const watchAndDeploy = async (
-  _instanceId: string,
+  instanceName: string,
   options: DeployOptions = {
     include: DEFAULT_INCLUDES,
     exclude: DEFAULT_EXCLUDES,
     verbose: false,
   }
 ) => {
-  if (!_instanceId) {
-    console.error(
+  if (!instanceName) {
+    throw new Error(
       `No instance name provided and none was found in package.json or pockethost.json. Use 'phio link <instance>'`
     )
-    process.exit(1)
   }
   console.log(`Dev mode`)
   const { include, exclude, verbose } = options
   // console.log({ include, exclude })
 
-  const instance = await getInstanceBySubdomainCnameOrId(_instanceId)
+  const instance = await (async () => {
+    try {
+      return await getInstanceBySubdomainCnameOrId(instanceName)
+    } catch (error) {
+      throw new Error(`Instance ${instanceName} not found`)
+    }
+  })()
 
   const limiter = new Bottleneck({ maxConcurrent: 1 })
   const upload = debounce(
@@ -94,6 +98,7 @@ export async function deployMyCode(
   exclude: string[],
   verbose: boolean
 ) {
+  await ensureLoggedIn()
   console.log(`🚚 Deploy started for ${instanceName}`)
   const args: IFtpDeployArguments = {
     server: 'ftp.pockethost.io',
@@ -111,7 +116,7 @@ export async function deployMyCode(
 
 export const DevCommand = () => {
   return new Command('dev')
-    .argument(`[instanceId]`, `Instance name`, savedInstanceName())
+    .argument(`[instanceName]`, `Instance name`, savedInstanceName())
     .description(`Watch for local modifications and sync to remote`)
     .option(`-v, --verbose`, `Verbose output`)
     .option(
