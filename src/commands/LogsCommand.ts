@@ -1,8 +1,8 @@
 import { fetchEventSource } from '@sentool/fetch-event-source'
 import { Command } from 'commander'
-import { config } from '../lib/config'
 import { savedInstanceName } from '../lib/defaultInstanceId'
 import { ensureLoggedIn } from '../lib/ensureLoggedIn'
+import { getClient } from '../lib/getClient'
 
 export enum StreamNames {
   StdOut = 'stdout',
@@ -26,13 +26,14 @@ const watchInstanceLog = async (
   const signal = controller.signal
 
   await ensureLoggedIn()
+  const client = await getClient()
 
   const continuallyFetchFromEventSource = () => {
     const url = `https://${instanceId}.pockethost.io/logs`
     const body = {
       instanceId,
       n: nInitial,
-      auth: config(`auth`)!.token,
+      auth: client.authStore.token,
     }
 
     fetchEventSource(url, {
