@@ -1,5 +1,11 @@
 # phio
 
+## 0.3.1
+
+### Patch Changes
+
+- fd128bc: Node v22 compat
+
 ## 0.3.0
 
 ### Minor Changes
