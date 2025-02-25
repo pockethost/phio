@@ -1,7 +1,9 @@
 import envPaths from 'env-paths'
 import env from 'env-var'
-import { ensureDirSync } from 'fs-extra/esm'
+import fse from 'fs-extra'
 import { join } from 'path'
+
+const { ensureDirSync } = fse
 
 export const PHIO_HOME = (...paths: string[]) =>
   join(

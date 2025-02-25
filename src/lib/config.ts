@@ -1,7 +1,8 @@
-import { readJSONSync, writeJSONSync } from 'fs-extra/esm'
+import fse from 'fs-extra'
 import { type AuthModel } from 'pocketbase'
 import { PHIO_HOME } from './constants'
 
+const { readJSONSync, writeJSONSync } = fse
 export type Config = {
   instanceId: string
   email: string
