@@ -23,4 +23,17 @@ program
   .addCommand(DeployCommand())
   .addCommand(InfoCommand())
 
-program.parseAsync(process.argv).catch(console.error)
+// Add error handling
+program.exitOverride()
+
+program.parseAsync(process.argv).catch((err) => {
+  // Handle specific commander error types
+  if (err.code === 'commander.unknownCommand') {
+    console.error('Error: Unknown command')
+  } else if (err.code === 'commander.missingArgument') {
+    console.error('Error: Missing required argument')
+  } else {
+    console.error('Error:', err.message)
+  }
+  process.exit(1)
+})

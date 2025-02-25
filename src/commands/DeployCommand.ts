@@ -1,10 +1,10 @@
 import { Command } from 'commander'
-import { savedInstanceId } from '../lib/defaultInstanceId'
+import { savedInstanceName } from '../lib/defaultInstanceId'
 import { DEFAULT_EXCLUDES, DEFAULT_INCLUDES, deployMyCode } from './DevCommand'
 
 export const DeployCommand = () => {
   return new Command(`deploy`)
-    .argument(`[instanceId]`, `Instance name`, savedInstanceId())
+    .argument(`[instanceName]`, `Instance name`, savedInstanceName())
     .description(`Deploy to remote`)
     .option(`-v, --verbose`, `Verbose output`)
     .option(
@@ -21,8 +21,8 @@ export const DeployCommand = () => {
       },
       DEFAULT_EXCLUDES
     )
-    .action((instanceId, options) => {
+    .action((instanceName, options) => {
       const { include, exclude, verbose } = options
-      deployMyCode(instanceId, include, exclude, verbose)
+      deployMyCode(instanceName, include, exclude, verbose)
     })
 }

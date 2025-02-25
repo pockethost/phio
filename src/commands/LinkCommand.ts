@@ -1,24 +1,20 @@
 import { select } from '@inquirer/prompts'
 import { Command } from 'commander'
-import { config } from '../lib/config'
-import { saveInstanceId } from '../lib/defaultInstanceId'
+import { saveInstanceName } from '../lib/defaultInstanceId'
 import { InstanceFields } from '../lib/InstanceFields'
 import { getClient, getInstanceBySubdomainCnameOrId } from './../lib/getClient'
 
-export const isLinked = () => !!config('instanceId')
-
-export const link = async (instanceNameOrId: string) => {
-  saveInstanceId(instanceNameOrId, 'package.json')
-  const instance = await getInstanceBySubdomainCnameOrId(instanceNameOrId)
+export const link = async (instanceName: string) => {
+  saveInstanceName(instanceName, 'package.json')
+  const instance = await getInstanceBySubdomainCnameOrId(instanceName)
   if (!instance) {
     return
   }
-  config('instanceId', instance.subdomain)
   return instance
 }
 
 export const linkWithUserInput = async () => {
-  const client = getClient()
+  const client = await getClient()
   const instances = await client
     .collection(`instances`)
     .getFullList<InstanceFields>()
@@ -31,7 +27,7 @@ export const linkWithUserInput = async () => {
   }
 
   while (true) {
-    const instanceNameOrId = await select({
+    const instanceName = await select({
       message: `Choose the instance you'd like to link`,
       choices: instances
         .sort((a, b) => a.subdomain.localeCompare(b.subdomain))
@@ -42,7 +38,7 @@ export const linkWithUserInput = async () => {
           value: instance.subdomain,
         })),
     })
-    const instance = await link(instanceNameOrId)
+    const instance = await link(instanceName)
     if (!instance) {
       console.error(`Instance not found`)
       continue

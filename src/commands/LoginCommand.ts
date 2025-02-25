@@ -2,10 +2,16 @@ import { input, password } from '@inquirer/prompts'
 import { Command } from 'commander'
 import * as EmailValidator from 'email-validator'
 import { config } from '../lib/config'
-import { getClient } from './../lib/getClient'
-import { runTasks } from './../lib/Task'
+import { PHIO_USERNAME } from '../lib/constants'
+import { login } from './../lib/getClient'
 
 export const loginWithUserInput = async () => {
+  if (PHIO_USERNAME()) {
+    throw new Error(
+      'Cannot login with username and password if PHIO_USERNAME is set'
+    )
+  }
+
   while (true) {
     const email = await input({
       message: 'Enter your pockethost.io email address',
@@ -24,29 +30,20 @@ export const loginWithUserInput = async () => {
 
     config(`email`, email)
 
-    const client = getClient()
     try {
-      await runTasks([
-        {
-          name: `Logging in`,
-          run: async () => {
-            const res = await client
-              .collection('users')
-              .authWithPassword(email, pw)
-          },
-        },
-      ])
+      const authStore = await login(email, pw)
+
+      config(`auth`, {
+        token: authStore.exportToCookie(),
+        record: authStore.model,
+      })
     } catch (e) {
       console.error(
-        `There was an error logging in. Please try again or go to https://pockethost.io to reset your password.`
+        `There was an error logging in. Please try again or go to https://pockethost.io to reset your password. (${e})`
       )
       continue
     }
 
-    config(`auth`, {
-      token: client.authStore.exportToCookie(),
-      record: client.authStore.model,
-    })
     break
   }
   console.log(`Logged in!`)

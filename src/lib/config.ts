@@ -4,7 +4,6 @@ import { PHIO_HOME } from './constants'
 
 const { readJSONSync, writeJSONSync } = fse
 export type Config = {
-  instanceId: string
   email: string
   auth: { record: AuthModel; token: string }
 }

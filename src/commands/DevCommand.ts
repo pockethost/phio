@@ -7,7 +7,7 @@ import { Command } from 'commander'
 import multimatch from 'multimatch'
 import { config } from '../lib/config'
 import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
-import { savedInstanceId } from './../lib/defaultInstanceId'
+import { savedInstanceName } from './../lib/defaultInstanceId'
 
 export const DEFAULT_INCLUDES = [
   `pb_*`,
@@ -92,7 +92,7 @@ export async function deployMyCode(
   exclude: string[],
   verbose: boolean
 ) {
-  console.log('🚚 Deploy started')
+  console.log(`🚚 Deploy started for ${instanceName}`)
   const args: IFtpDeployArguments = {
     server: 'ftp.pockethost.io',
     username: `__auth__`,
@@ -109,7 +109,7 @@ export async function deployMyCode(
 
 export const DevCommand = () => {
   return new Command('dev')
-    .argument(`[instanceId]`, `Instance name`, savedInstanceId())
+    .argument(`[instanceId]`, `Instance name`, savedInstanceName())
     .description(`Watch for local modifications and sync to remote`)
     .option(`-v, --verbose`, `Verbose output`)
     .option(

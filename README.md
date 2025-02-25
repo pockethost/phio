@@ -39,7 +39,7 @@ Use `pockethost` in your `package.json` to save your instance name so you don't 
 // package.json
 {
   "pockethost": {
-    "instanceId": "all-your-base"
+    "instanceName": "all-your-base"
   }
 }
 ```
@@ -50,6 +50,16 @@ Use `pockethost.json` to save your instance name so you don't need to keep typin
 
 ```json
 {
-    "instanceId": "all-your-base'
+  "instanceName": "all-your-base"
 }
 ```
+
+## Environment Variables
+
+The following environment variables can be used to override any saved configuration:
+
+- `PHIO_USERNAME` - Override saved username
+- `PHIO_PASSWORD` - Override saved password
+- `PHIO_INSTANCE_NAME` - Override saved instance name
+
+Environment variables take precedence over configuration in package.json or pockethost.json.

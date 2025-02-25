@@ -1,7 +1,7 @@
 import { fetchEventSource } from '@sentool/fetch-event-source'
 import { Command } from 'commander'
 import { config } from '../lib/config'
-import { savedInstanceId } from '../lib/defaultInstanceId'
+import { savedInstanceName } from '../lib/defaultInstanceId'
 import { ensureLoggedIn } from '../lib/ensureLoggedIn'
 
 export enum StreamNames {
@@ -70,7 +70,7 @@ const watchInstanceLog = async (
 export const LogsCommand = () => {
   return new Command('logs')
     .description(`Tail instance logs`)
-    .argument('[instance]', 'Instance ID', savedInstanceId())
+    .argument('[instance]', 'Instance ID', savedInstanceName())
     .action((instance) => {
       watchInstanceLog(instance, (log) => {
         const { time, message, stream } = log

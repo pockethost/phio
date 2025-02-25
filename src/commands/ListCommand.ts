@@ -7,7 +7,7 @@ export const ListCommand = () => {
     .alias(`ls`)
     .description(`List all the logs`)
     .action(async () => {
-      const client = getClient()
+      const client = await getClient()
       const instances = await client
         .collection(`instances`)
         .getFullList<InstanceFields>()
