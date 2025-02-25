@@ -1,5 +1,11 @@
 # phio
 
+## 0.3.3
+
+### Patch Changes
+
+- 4bf6d1e: Fix: use client auth token instead of stored token
+
 ## 0.3.2
 
 ### Patch Changes
