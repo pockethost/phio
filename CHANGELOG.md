@@ -1,5 +1,11 @@
 # phio
 
+## 0.3.2
+
+### Patch Changes
+
+- b85e156: Fix: nodev22 compat
+
 ## 0.3.1
 
 ### Patch Changes
