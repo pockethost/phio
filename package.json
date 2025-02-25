@@ -28,11 +28,8 @@
     "@types/node": "^22.5.5",
     "prettier-plugin-organize-imports": "^4.0.0"
   },
-  "peerDependencies": {
-    "typescript": "^5.6.2"
-  },
   "scripts": {
-    "dev": "tsx --watch ./src/index.ts"
+    "dev": "tsx ./src/cli.ts"
   },
   "bin": {
     "phio": "src/cli.ts"
@@ -56,7 +53,8 @@
     "multimatch": "^7.0.0",
     "ora": "^8.1.0",
     "pocketbase": "^0.21.5",
-    "tsx": "^4.19.1"
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
   },
   "prettier": {
     "semi": false,
