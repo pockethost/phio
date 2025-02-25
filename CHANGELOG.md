@@ -1,5 +1,18 @@
 # phio
 
+## 0.3.0
+
+### Minor Changes
+
+- 82b4c6b: Add support for PHIO_USERNAME, PHIO_PASSWORD, and PHIO_INSTANCE_NAME env vars
+- 82b4c6b: Migrate to instance names only (no IDs)
+- 82b4c6b: Remove support for global instance name - local package.json or pockethost.json required now
+
+### Patch Changes
+
+- 1b46e08: Alphabetize instance lists
+- 82b4c6b: Improved error message reporting
+
 ## 0.2.5
 
 ### Patch Changes
