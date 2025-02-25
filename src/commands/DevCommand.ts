@@ -5,9 +5,8 @@ import Bottleneck from 'bottleneck'
 import { watch } from 'chokidar'
 import { Command } from 'commander'
 import multimatch from 'multimatch'
-import { config } from '../lib/config'
 import { ensureLoggedIn } from '../lib/ensureLoggedIn'
-import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
+import { getClient, getInstanceBySubdomainCnameOrId } from '../lib/getClient'
 import { savedInstanceName } from './../lib/defaultInstanceId'
 
 export const DEFAULT_INCLUDES = [
@@ -99,11 +98,12 @@ export async function deployMyCode(
   verbose: boolean
 ) {
   await ensureLoggedIn()
+  const client = await getClient()
   console.log(`🚚 Deploy started for ${instanceName}`)
   const args: IFtpDeployArguments = {
     server: 'ftp.pockethost.io',
     username: `__auth__`,
-    password: config(`auth`)!.token,
+    password: client.authStore.token,
     'server-dir': `${instanceName}/`,
     include,
     exclude: [...excludeDefaults, ...exclude],
