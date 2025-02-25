@@ -2,4 +2,4 @@
 'phio': patch
 ---
 
-Alphebetize instance lists
+Alphabetize instance lists
