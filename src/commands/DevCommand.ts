@@ -1,5 +1,5 @@
 import { debounce } from '@s-libs/micro-dash'
-import { deploy, excludeDefaults } from '@samkirkland/ftp-deploy'
+import * as ftp from '@samkirkland/ftp-deploy'
 import { IFtpDeployArguments } from '@samkirkland/ftp-deploy/src/types'
 import Bottleneck from 'bottleneck'
 import { watch } from 'chokidar'
@@ -8,6 +8,8 @@ import multimatch from 'multimatch'
 import { config } from '../lib/config'
 import { getInstanceBySubdomainCnameOrId } from '../lib/getClient'
 import { savedInstanceName } from './../lib/defaultInstanceId'
+
+const { deploy, excludeDefaults } = ftp
 
 export const DEFAULT_INCLUDES = [
   `pb_*`,
