@@ -1,0 +1,3 @@
+[submodule "packages/sentool-fetch-event-source"]
+	path = packages/sentool-fetch-event-source
+	url = https://github.com/pockethost/sentool-fetch-event-source.git
