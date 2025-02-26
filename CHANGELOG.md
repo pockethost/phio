@@ -1,5 +1,14 @@
 # phio
 
+## 0.3.4
+
+### Patch Changes
+
+- 24988ee: Feat: logout command
+- de7168b: Fix: various auth fixes
+- 6262058: Fix: use correct token for log watching
+- 5d28256: Enhance logs command with improved streaming and error handling
+
 ## 0.3.3
 
 ### Patch Changes
