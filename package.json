@@ -41,7 +41,7 @@
     "@inquirer/prompts": "^7.3.2",
     "@s-libs/micro-dash": "^18.0.0",
     "@samkirkland/ftp-deploy": "github:benallfree/ftp-deploy#132389e",
-    "@sentool/fetch-event-source": "^0.6.0",
+    "@sentool/fetch-event-source": "github:pockethost/sentool-fetch-event-source#c975adc3cdf9c645bf094b0b8a28454699075e22",
     "bottleneck": "^2.19.5",
     "chokidar": "^4.0.3",
     "commander": "^13.1.0",

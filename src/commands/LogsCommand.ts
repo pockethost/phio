@@ -2,7 +2,7 @@ import { fetchEventSource } from '@sentool/fetch-event-source'
 import { Command } from 'commander'
 import { savedInstanceName } from '../lib/defaultInstanceId'
 import { ensureLoggedIn } from '../lib/ensureLoggedIn'
-import { getClient } from '../lib/getClient'
+import { getClient, getInstanceBySubdomainCnameOrId } from '../lib/getClient'
 
 export enum StreamNames {
   StdOut = 'stdout',
@@ -15,73 +15,192 @@ export type InstanceLogFields = {
   stream: StreamNames
 }
 
+type EventSourceMessage = {
+  data: InstanceLogFields | null
+}
+
 type Unsubscribe = () => void
 
+/**
+ * Watches instance logs and streams them to the provided update callback
+ *
+ * @param instanceName - The instance ID or subdomain to watch logs for
+ * @param update - Callback function that will receive log entries
+ * @param nInitial - Number of initial log entries to fetch
+ * @returns A tuple with [promise that resolves when streaming ends, function to unsubscribe]
+ */
 const watchInstanceLog = async (
-  instanceId: string,
+  instanceName: string,
   update: (log: InstanceLogFields) => void,
   nInitial = 100
-): Promise<Unsubscribe> => {
+): Promise<[Promise<void>, Unsubscribe]> => {
   const controller = new AbortController()
   const signal = controller.signal
+  let isAborting = false
+  let retryTimeout: ReturnType<typeof setTimeout> | null = null
 
   await ensureLoggedIn()
   const client = await getClient()
 
-  const continuallyFetchFromEventSource = () => {
-    const url = `https://${instanceId}.pockethost.io/logs`
-    const body = {
-      instanceId,
-      n: nInitial,
-      auth: client.authStore.token,
+  try {
+    await getInstanceBySubdomainCnameOrId(instanceName)
+  } catch (e) {
+    throw new Error(`Instance "${instanceName}" not found.`)
+  }
+
+  // Function to clear any pending timeouts
+  const clearPendingTimeouts = () => {
+    if (retryTimeout) {
+      clearTimeout(retryTimeout)
+      retryTimeout = null
+    }
+  }
+
+  // Create promise that will resolve when streaming ends
+  const streamingPromise = new Promise<void>((resolve, reject) => {
+    const continuallyFetchFromEventSource = () => {
+      // Don't attempt to reconnect if we're aborting
+      if (isAborting) {
+        resolve()
+        return
+      }
+
+      const url = `https://${instanceName}.pockethost.io/logs`
+      const body = {
+        instanceId: instanceName,
+        n: nInitial,
+        auth: client.authStore.exportToCookie(),
+      }
+
+      fetchEventSource(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        openWhenHidden: true,
+        body: JSON.stringify(body),
+        onmessage: (event: EventSourceMessage) => {
+          const { data } = event
+          if (!data || isAborting) return
+          update(data)
+        },
+        onopen: async (response: Response) => {
+          if (!response.ok) {
+            const error = `Failed to open log stream: ${response.status} ${response.statusText}`
+            reject(new Error(error))
+          }
+        },
+        onerror: (e: Error) => {
+          if (isAborting) return
+          console.error(`Log stream error: ${e}`)
+
+          // Clear any existing timeout before setting a new one
+          clearPendingTimeouts()
+          retryTimeout = setTimeout(continuallyFetchFromEventSource, 100)
+        },
+        onclose: () => {
+          if (isAborting) return
+          console.log(`Log stream closed. Reconnecting...`)
+
+          // Clear any existing timeout before setting a new one
+          clearPendingTimeouts()
+          retryTimeout = setTimeout(continuallyFetchFromEventSource, 100)
+        },
+        onabort: () => {
+          console.log(`Log stream aborted`)
+          clearPendingTimeouts()
+          resolve()
+        },
+        signal,
+      })
     }
 
-    fetchEventSource(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      openWhenHidden: true,
-      body: JSON.stringify(body),
-      onmessage: (event: any) => {
-        const { data } = event
-        if (!data) return
-        update(data)
-      },
-      onopen: async (response: Response) => {
-        // console.log(response)
-      },
-      onerror: (e: Error) => {
-        setTimeout(continuallyFetchFromEventSource, 100)
-      },
-      onclose: () => {
-        console.log(`closed`)
-        setTimeout(continuallyFetchFromEventSource, 100)
-      },
-      signal,
-    })
-  }
-  continuallyFetchFromEventSource()
+    // Start the initial connection
+    continuallyFetchFromEventSource()
+  })
 
-  return () => {
+  // Create clean-up function
+  const unsubscribe = () => {
+    isAborting = true
+    clearPendingTimeouts()
     controller.abort()
   }
+
+  // Add cleanup logic to run when promise completes
+  const wrappedPromise = streamingPromise
+    .catch((error) => {
+      unsubscribe()
+      throw error
+    })
+    .finally(() => {
+      clearPendingTimeouts()
+    })
+
+  return [wrappedPromise, unsubscribe]
 }
 
+/**
+ * Creates the logs command
+ */
 export const LogsCommand = () => {
   return new Command('logs')
-    .description(`Tail instance logs`)
+    .description('Tail instance logs')
     .argument('[instance]', 'Instance ID', savedInstanceName())
-    .action((instance) => {
-      watchInstanceLog(instance, (log) => {
-        const { time, message, stream } = log
-        if (stream === 'stderr') {
-          console.error(`[${time}] ${message}`)
-        } else {
-          console.log(`[${time}] ${message}`)
-        }
-      }).catch((e) => {
-        console.error(`Error fetching logs`, e)
-      })
+    .option(
+      '-n, --lines <number>',
+      'Number of initial log lines to show',
+      '100'
+    )
+    .action(async (instance, options) => {
+      let running = true
+      const nInitial = parseInt(options.lines, 10)
+
+      // Set up signal handling before starting stream
+      const cleanup = () => {
+        running = false
+        console.log('\nStopping log streaming...')
+
+        // We'll set this before unsubscribe is defined, but it will be assigned
+        // immediately after watchInstanceLog completes
+        if (unsubscribe) unsubscribe()
+      }
+
+      // Handle termination signals
+      const signals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGHUP']
+      signals.forEach((signal) => process.on(signal, cleanup))
+
+      // Declare unsubscribe variable that will be defined after watchInstanceLog
+      let unsubscribe: Unsubscribe | undefined
+
+      try {
+        // Start watching logs
+        const [streamPromise, unsubscribeFn] = await watchInstanceLog(
+          instance,
+          (log) => {
+            // Only process logs if we're still running
+            if (!running) return
+
+            const { time, message, stream } = log
+            if (stream === StreamNames.StdErr) {
+              console.error(`[${time}] ${message}`)
+            } else {
+              console.log(`[${time}] ${message}`)
+            }
+          },
+          nInitial
+        )
+
+        // Store unsubscribe function for use in cleanup
+        unsubscribe = unsubscribeFn
+
+        // Wait for the streaming to end naturally (should only happen on abort)
+        await streamPromise
+      } catch (err) {
+        cleanup()
+        throw err
+      } finally {
+        // Remove signal handlers to prevent memory leaks
+        signals.forEach((signal) => process.removeListener(signal, cleanup))
+      }
     })
 }
