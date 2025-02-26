@@ -4,6 +4,7 @@
 
 ```bash
 bunx phio login
+bunx phio logout
 bunx phio whoami
 ```
 

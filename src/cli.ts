@@ -7,6 +7,7 @@ import { InfoCommand } from './commands/InfoCommand'
 import { LinkCommand } from './commands/LinkCommand'
 import { ListCommand } from './commands/ListCommand'
 import { LoginCommand } from './commands/LoginCommand'
+import { LogoutCommand } from './commands/LogoutCommand'
 import { LogsCommand } from './commands/LogsCommand'
 import { WhoAmICommand } from './commands/WhoAmICommand'
 
@@ -21,6 +22,7 @@ program
   .addCommand(ListCommand())
   .addCommand(LinkCommand())
   .addCommand(DeployCommand())
+  .addCommand(LogoutCommand())
   .addCommand(InfoCommand())
 
 // Add error handling
