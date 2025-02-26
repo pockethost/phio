@@ -21,8 +21,8 @@ export const DeployCommand = () => {
       },
       DEFAULT_EXCLUDES
     )
-    .action((instanceName, options) => {
+    .action(async (instanceName, options) => {
       const { include, exclude, verbose } = options
-      deployMyCode(instanceName, include, exclude, verbose)
+      await deployMyCode(instanceName, include, exclude, verbose)
     })
 }
