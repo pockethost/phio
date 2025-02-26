@@ -33,10 +33,7 @@ export const loginWithUserInput = async () => {
     try {
       const authStore = await login(email, pw)
 
-      config(`auth`, {
-        token: authStore.exportToCookie(),
-        record: authStore.model,
-      })
+      config(`pb_auth`, authStore.exportToCookie())
     } catch (e) {
       console.error(
         `There was an error logging in. Please try again or go to https://pockethost.io to reset your password. (${e})`

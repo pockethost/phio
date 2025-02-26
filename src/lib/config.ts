@@ -1,11 +1,10 @@
 import fse from 'fs-extra'
-import { type AuthModel } from 'pocketbase'
 import { PHIO_HOME } from './constants'
 
 const { readJSONSync, writeJSONSync } = fse
 export type Config = {
   email: string
-  auth: { record: AuthModel; token: string }
+  pb_auth: string
 }
 export function config<T extends keyof Config>(
   k: T,

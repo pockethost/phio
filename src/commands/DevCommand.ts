@@ -40,6 +40,8 @@ export const watchAndDeploy = async (
     )
   }
   console.log(`Dev mode`)
+  await ensureLoggedIn()
+
   const { include, exclude, verbose } = options
   // console.log({ include, exclude })
 
@@ -81,7 +83,9 @@ export const watchAndDeploy = async (
     },
   })
   console.log(
-    `Watching for changes in ${include.join(', ')} and excluding ${exclude.join(', ')}`
+    `Watching for changes in ${include.join(', ')} and excluding ${exclude.join(
+      ', '
+    )}`
   )
   const handle = (path: string, details: any) => {
     upload()
@@ -103,7 +107,7 @@ export async function deployMyCode(
   const args: IFtpDeployArguments = {
     server: 'ftp.pockethost.io',
     username: `__auth__`,
-    password: client.authStore.token,
+    password: client.authStore.exportToCookie(),
     'server-dir': `${instanceName}/`,
     include,
     exclude: [...excludeDefaults, ...exclude],

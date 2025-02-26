@@ -2,6 +2,7 @@ import PocketBase from 'pocketbase'
 import { runTasks } from './../lib/Task'
 import { config } from './config'
 import { PHIO_MOTHERSHIP_URL, PHIO_PASSWORD, PHIO_USERNAME } from './constants'
+import { ensureLoggedIn } from './ensureLoggedIn'
 
 let client: PocketBase | undefined
 export const getClient = async () => {
@@ -21,31 +22,25 @@ export const getClient = async () => {
     }
   }
 
-  const authStore = config('auth')
-  if (authStore) {
-    const { record, token } = authStore
-    client.authStore.loadFromCookie(token)
+  const cookie = config('pb_auth')
+  if (cookie) {
+    client.authStore.loadFromCookie(cookie)
     // console.log({ valid: client.authStore.isValid })
     client.authStore.onChange((token, record) => {
       if (!client) {
         console.warn('No client found - please report this bug')
         return
       }
-      config('auth', {
-        token: client.authStore.exportToCookie(),
-        record: client.authStore.model,
-      })
+      config('pb_auth', client.authStore.exportToCookie())
     })
     await client.collection(`users`).authRefresh()
-    config(`auth`, {
-      token: client.authStore.exportToCookie(),
-      record: client.authStore.model,
-    })
+    config(`pb_auth`, client.authStore.exportToCookie())
   }
   return client
 }
 
 export const getInstanceBySubdomainCnameOrId = async (search: string) => {
+  await ensureLoggedIn()
   const client = await getClient()
   return await client
     .collection(`instances`)
