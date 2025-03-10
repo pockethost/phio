@@ -14,6 +14,7 @@ export const DEFAULT_INCLUDES = [
   'pb_*/**/*',
   `package.json`,
   `bun.lockb`,
+  `bun.lock`,
   `patches`,
   `patches/**/*`,
 ]
